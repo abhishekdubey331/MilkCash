@@ -8,7 +8,7 @@ import com.animall.Database.MilkSaleDatabase
 import com.animall.databinding.ActivityRecordSalesBinding
 import com.animall.repositories.MilkSaleRepository
 import com.animall.viewmodels.RecordSalesViewmodel
-import com.animall.viewmodels.RecordSalesViewmodelFactory
+import com.animall.viewmodels.RecordSalesViewModelFactory
 
 class RecordSalesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRecordSalesBinding
@@ -36,7 +36,7 @@ class RecordSalesActivity : AppCompatActivity() {
     private fun setupViewModel() {
         val database by lazy { MilkSaleDatabase.getDatabase(this) }
         val repository by lazy { MilkSaleRepository(database.milkSaleDao()) }
-        viewModel = ViewModelProvider(this, RecordSalesViewmodelFactory(repository)).get(RecordSalesViewmodel::class.java)
+        viewModel = ViewModelProvider(this, RecordSalesViewModelFactory(repository)).get(RecordSalesViewmodel::class.java)
         binding.viewModel = viewModel
         binding.lifecycleOwner = this
     }

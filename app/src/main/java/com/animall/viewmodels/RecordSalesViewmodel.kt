@@ -130,7 +130,7 @@ class RecordSalesViewmodel(private val repository: MilkSaleRepository): ViewMode
     }
 
     }
-class RecordSalesViewmodelFactory(private val repository: MilkSaleRepository) : ViewModelProvider.Factory {
+class RecordSalesViewModelFactory(private val repository: MilkSaleRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RecordSalesViewmodel::class.java)) {
             @Suppress("UNCHECKED_CAST")

@@ -32,7 +32,7 @@ class ViewSalesViewModel(private val repository: MilkSaleRepository): ViewModel(
     val message: LiveData<String>
         get() = _message
 
-    private val _selectedDateFormatted = MutableLiveData<String>("Date:")
+    private val _selectedDateFormatted = MutableLiveData<String>()
     val selectedDateFormatted: LiveData<String>
         get() = _selectedDateFormatted
 
@@ -41,6 +41,7 @@ class ViewSalesViewModel(private val repository: MilkSaleRepository): ViewModel(
     }
 
     fun showDatePicker() {
+
         datePickerVisible.value = true
     }
 
@@ -134,9 +135,9 @@ class ViewSalesViewModel(private val repository: MilkSaleRepository): ViewModel(
 }
 class ViewSalesViewModelFactory(private val repository: MilkSaleRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(RecordSalesViewmodel::class.java)) {
+        if (modelClass.isAssignableFrom(ViewSalesViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return RecordSalesViewmodel(repository) as T
+            return ViewSalesViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

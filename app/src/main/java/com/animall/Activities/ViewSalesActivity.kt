@@ -2,21 +2,35 @@ package com.animall.Activities
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.EditText
 import androidx.lifecycle.ViewModelProvider
 import com.animall.Database.MilkSaleDatabase
 import com.animall.databinding.ActivityViewSalesBinding
 import com.animall.repositories.MilkSaleRepository
+import com.animall.viewmodels.RecordSalesViewModelFactory
 import com.animall.viewmodels.RecordSalesViewmodel
+import com.animall.viewmodels.ViewSalesViewModel
+import com.animall.viewmodels.ViewSalesViewModelFactory
+import java.text.SimpleDateFormat
+import java.util.*
 
-class ViewSalesActivity : AppCompatActivity() {
+class ViewSalesActivity : AppCompatActivity(),DatePickerListener {
     private lateinit var binding: ActivityViewSalesBinding
-    private lateinit var viewModel: RecordSalesViewmodel
+    private lateinit var viewModel: ViewSalesViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityViewSalesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupViewModel()
+        binding.startDateTxt.setOnClickListener {
+            val customDatePickerDialog = DatePickerDialogBox(this)
+            customDatePickerDialog.showDatePicker(it as EditText, false)
+        }
+        binding.endDateTxt.setOnClickListener {
+            val customDatePickerDialog = DatePickerDialogBox(this)
+            customDatePickerDialog.showDatePicker(it as EditText, false)
+        }
 
 //
 //        val datePicker = createDatePickerDialog()
@@ -49,34 +63,24 @@ class ViewSalesActivity : AppCompatActivity() {
     private fun setupViewModel() {
         val database by lazy { MilkSaleDatabase.getDatabase(this) }
         val repository by lazy { MilkSaleRepository(database.milkSaleDao()) }
+        viewModel = ViewModelProvider(this, ViewSalesViewModelFactory(repository)).get(ViewSalesViewModel::class.java)
+        binding.viewModel = viewModel
+        binding.lifecycleOwner = this
+
+    }
+
+    override fun onDateSelected(
+        year: Int,
+        month: Int,
+        dayOfMonth: Int,
+        editText: EditText,
+        isStartDate: Boolean
+    ) {
+        val calendar = Calendar.getInstance().apply {
+            set(year, month, dayOfMonth)
+        }
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        editText.setText(dateFormat.format(calendar.time))
 
     }
 }
-
-
-//    private fun createDatePickerDialog(): DatePickerDialog {
-//        val datePickerListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
-//            val calendar = Calendar.getInstance().apply {
-//                set(year, month, dayOfMonth)
-//            }
-//            if (viewModel.isStartDateSelected) {
-//                viewModel.startDate.value = calendar.time
-//            } else {
-//                viewModel.endDate.value = calendar.time
-//            }
-//        }
-//
-//        val calendar = Calendar.getInstance()
-//        return DatePickerDialog(
-//            this,
-//            datePickerListener,
-//            calendar.get(Calendar.YEAR),
-//            calendar.get(Calendar.MONTH),
-//            calendar.get(Calendar.DAY_OF_MONTH)
-//        )
-//    }
-//
-//    private fun showDatePicker(datePicker: DatePickerDialog) {
-//        datePicker.show()
-//    }
-

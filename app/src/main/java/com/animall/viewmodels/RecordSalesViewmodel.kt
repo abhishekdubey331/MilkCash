@@ -30,7 +30,7 @@ class RecordSalesViewmodel(private val repository: MilkSaleRepository): ViewMode
     val message: LiveData<String>
         get() = _message
 
-    private val _selectedDateFormatted = MutableLiveData<String>("Date:")
+    private val _selectedDateFormatted = MutableLiveData<String>()
     val selectedDateFormatted: LiveData<String>
         get() = _selectedDateFormatted
 

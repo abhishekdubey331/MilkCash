@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+<data>
+    <variable
+        name="viewModel"
+        type="com.animall.viewmodels.MainViewmodel" />
+    <import type="android.view.View" />
+</data>
+    <androidx.constraintlayout.widget.ConstraintLayout
+
+        android:id="@+id/HomeCl"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".Activities.MainActivity"
+        android:background="@color/white">
+            <TextView
+                android:id="@+id/recordSalesBtn"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Record Sale"
+                android:textStyle="bold"
+                android:padding="20dp"
+                android:textAlignment="center"
+                android:background="@drawable/button_background"
+                android:textColor="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                />
+            <TextView
+                android:id="@+id/viewSalesBtn"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="View Sales"
+                android:textStyle="bold"
+                android:padding="20dp"
+                android:textAlignment="center"
+                android:background="@drawable/button_background"
+                android:textColor="#000000"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recordSalesBtn"
+                android:layout_marginTop="10dp"
+
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

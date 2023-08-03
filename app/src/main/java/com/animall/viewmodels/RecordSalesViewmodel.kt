@@ -47,10 +47,9 @@ class RecordSalesViewmodel(private val repository: MilkSaleRepository): ViewMode
             set(year, monthOfYear, dayOfMonth)
         }
         selectedDate.value = calendar.time
-        datePickerVisible.value = false
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         _selectedDateFormatted.value = dateFormat.format(selectedDate.value)
-        datePickerVisible.value = false
+
 
     }
 
@@ -67,7 +66,7 @@ class RecordSalesViewmodel(private val repository: MilkSaleRepository): ViewMode
             return
         }
 
-        if(_selectedDateFormatted.value.equals("Date:")){
+        if(_selectedDateFormatted.value.isNullOrEmpty()){
             _dateError.value="Please enter a Date."
             return
         }

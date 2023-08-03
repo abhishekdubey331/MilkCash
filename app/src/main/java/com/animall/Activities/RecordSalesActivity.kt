@@ -56,5 +56,6 @@ class RecordSalesActivity : AppCompatActivity() ,DatePickerListener{
         }
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         editText.setText(dateFormat.format(calendar.time))
+        viewModel.onDateChanged(year,month,dayOfMonth)
     }
 }

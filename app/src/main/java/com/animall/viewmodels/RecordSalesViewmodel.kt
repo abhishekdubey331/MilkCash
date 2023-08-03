@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainViewmodel(private val repository: MilkSaleRepository): ViewModel() {
+class RecordSalesViewmodel(private val repository: MilkSaleRepository): ViewModel() {
     val quantity = MutableLiveData<String>()
     val price = MutableLiveData<String>()
     val datePickerVisible = MutableLiveData<Boolean>()
@@ -130,11 +130,11 @@ class MainViewmodel(private val repository: MilkSaleRepository): ViewModel() {
     }
 
     }
-class WordViewModelFactory(private val repository: MilkSaleRepository) : ViewModelProvider.Factory {
+class RecordSalesViewmodelFactory(private val repository: MilkSaleRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(MainViewmodel::class.java)) {
+        if (modelClass.isAssignableFrom(RecordSalesViewmodel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return MainViewmodel(repository) as T
+            return RecordSalesViewmodel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

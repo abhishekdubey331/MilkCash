@@ -7,7 +7,7 @@
         <import type="android.view.View"/>
         <variable
             name="viewModel"
-            type="com.animall.viewmodels.RecordSalesViewmodel" />
+            type="com.animall.viewmodels.RecordSalesViewModel" />
           </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -59,6 +59,7 @@
             android:layout_marginTop="8dp"
             android:editable="false"
             app:error="@{viewModel.dateError}"
+            android:text="@{viewModel.selectedDateFormatted}"
             android:textColorHint="@color/black"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"

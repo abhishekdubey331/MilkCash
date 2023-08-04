@@ -6,7 +6,7 @@
 <data>
     <variable
         name="viewModel"
-        type="com.animall.viewmodels.RecordSalesViewmodel" />
+        type="com.animall.viewmodels.RecordSalesViewModel" />
     <import type="android.view.View" />
 </data>
     <androidx.constraintlayout.widget.ConstraintLayout

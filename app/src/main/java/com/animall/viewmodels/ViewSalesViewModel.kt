@@ -1,137 +1,85 @@
 package com.animall.viewmodels
 
 
-import android.util.Log
 import androidx.lifecycle.*
-import com.animall.models.MilkSale
+import com.animall.models.MilkSaleEntity
 import com.animall.repositories.MilkSaleRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
 import java.util.*
 
 class ViewSalesViewModel(private val repository: MilkSaleRepository): ViewModel() {
-    val quantity = MutableLiveData<String>()
-    val price = MutableLiveData<String>()
-    val datePickerVisible = MutableLiveData<Boolean>()
-    val selectedDate = MutableLiveData<Date>()
 
-    private val _quantityError = MutableLiveData<String?>()
-    val quantityError: MutableLiveData<String?>
-        get() = _quantityError
 
-    private val _priceError = MutableLiveData<String?>()
-    val priceError: MutableLiveData<String?>
-        get() = _priceError
+   private var startSelectedDate :Date?=null
+    private var endSelectedDate :Date?=null
+    private val _totalSales = MutableLiveData<Double>(0.0)
+    val totalSales: LiveData<Double>
+        get() = _totalSales
 
-    private val _dateError = MutableLiveData<String?>()
-    val dateError: MutableLiveData<String?>
-        get() = _dateError
-    private val _message = MutableLiveData<String>()
+    private val _totalRevenue = MutableLiveData<Double>(0.0)
+    val totalRevenue: LiveData<Double>
+        get() = _totalRevenue
+
+
+
+
+
+
+    private val _message = MutableLiveData<String>("")
     val message: LiveData<String>
         get() = _message
 
-    private val _selectedDateFormatted = MutableLiveData<String>()
-    val selectedDateFormatted: LiveData<String>
-        get() = _selectedDateFormatted
 
-    init {
-        datePickerVisible.value = false
+     fun validatedDatesAndGetData():Boolean{
+        if (startSelectedDate == null || endSelectedDate == null) {
+            _message.value = "Please select both start and end dates"
+            return false
+        }
+
+        if (startSelectedDate!!.after(endSelectedDate)) {
+            _message.value = "Start date cannot be after end date"
+            return false
+        }
+        getSalesBetweenDates(startSelectedDate!!.time,endSelectedDate!!.time)
+
+
+         return true
     }
 
-    fun showDatePicker() {
 
-        datePickerVisible.value = true
-    }
 
-    fun onDateChanged(year: Int, monthOfYear: Int, dayOfMonth: Int) {
+    fun onDateChanged(year: Int, monthOfYear: Int, dayOfMonth: Int,startTime:Boolean) {
         val calendar = Calendar.getInstance().apply {
             set(year, monthOfYear, dayOfMonth)
         }
-        selectedDate.value = calendar.time
-        datePickerVisible.value = false
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        _selectedDateFormatted.value = dateFormat.format(selectedDate.value)
-        datePickerVisible.value = false
-
-    }
-
-
-    fun saveSale() {
-        if (quantity.value.isNullOrEmpty()) {
-            _quantityError.value = "Please enter a quantity."
-            return
-        }
-
-
-        if (price.value.isNullOrEmpty()) {
-            _priceError.value = "Please enter a price."
-            return
-        }
-
-        if(_selectedDateFormatted.value.equals("Date:")){
-            _dateError.value="Please enter a Date."
-            return
-        }
-
-        clearErrors()
-
-        val saleQuantity = quantity.value!!.toDouble()
-        val salePrice = price.value!!.toDouble()
-
-        val totalAmount = saleQuantity * salePrice
-
-        val sale = MilkSale(
-            id = System.currentTimeMillis(), // Generate a unique ID
-            quantity = saleQuantity,
-            pricePerUnit = salePrice,
-            totalAmount = totalAmount,
-            date = selectedDate.value?.time ?: 0L
-        )
-
-        CoroutineScope(Dispatchers.IO).launch {
-            try {
-                repository.insertMilkSale(sale).runCatching {
-                    _message.postValue("saved")
-                }
-
-            } catch (e: Exception) {
-                _message.postValue("Error while saving data ${e.toString()}")
-            }
-        }
-    }
-    fun deleteSalesBetweenDates(startDate: Long, endDate: Long) {
-        viewModelScope.launch {
-            try {
-                repository.deleteSalesBetweenDates(startDate, endDate)
-                _message.value = "Sales deleted between selected dates"
-            } catch (e: Exception) {
-                _message.value = "Error deleting sales: ${e.message}"
-            }
-        }
+        if(startTime) startSelectedDate = calendar.time
+        else endSelectedDate=calendar.time
     }
     fun getSalesBetweenDates(startDate: Long, endDate: Long) {
         viewModelScope.launch {
             try {
                 val sales = repository.getSalesBetweenDates(startDate, endDate)
+                calculateSalesAndRevenue(sales)
+
             } catch (e: Exception) {
                 _message.value = "Error getting sales: ${e.message}"
             }
         }
     }
-    fun getAllSales() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val sales = repository.getAllSales()
-            Log.d("Database", "All Milk Sales: $sales")
-        }
+    fun calculateSalesAndRevenue(sales:List<MilkSaleEntity>) {
+        val totalSales = sales.sumOf { it.quantity }
+        val totalRevenue = sales.sumOf { it.totalAmount }
+        _totalSales.value = totalSales
+        _totalRevenue.value = totalRevenue
+        _message.postValue("data fetched successfully!")
+            }
+    fun clearAllData(){
+        startSelectedDate=null;
+        endSelectedDate=null;
+        _message.value=""
+        _totalSales.value=0.0
+        _totalRevenue.value=0.0
     }
-    fun clearErrors(){
-        _priceError.value=null
-        _dateError.value=null
-        _quantityError.value=null
-    }
-
 }
 class ViewSalesViewModelFactory(private val repository: MilkSaleRepository) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {

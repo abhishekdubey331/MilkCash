@@ -3,12 +3,11 @@ package com.animall.Activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.animall.Database.MilkSaleDatabase
 import com.animall.databinding.ActivityViewSalesBinding
 import com.animall.repositories.MilkSaleRepository
-import com.animall.viewmodels.RecordSalesViewModelFactory
-import com.animall.viewmodels.RecordSalesViewmodel
 import com.animall.viewmodels.ViewSalesViewModel
 import com.animall.viewmodels.ViewSalesViewModelFactory
 import java.text.SimpleDateFormat
@@ -23,41 +22,35 @@ class ViewSalesActivity : AppCompatActivity(),DatePickerListener {
         binding = ActivityViewSalesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setupViewModel()
+        setupListeners()
+        setupObservers()
+    }
+
+    private fun setupObservers() {
+        viewModel.message.observe(this){message->
+            if(!message.isNullOrEmpty()) Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun setupListeners() {
         binding.startDateTxt.setOnClickListener {
             val customDatePickerDialog = DatePickerDialogBox(this)
-            customDatePickerDialog.showDatePicker(it as EditText, false)
+            customDatePickerDialog.showDatePicker(it as EditText, true)
         }
         binding.endDateTxt.setOnClickListener {
             val customDatePickerDialog = DatePickerDialogBox(this)
             customDatePickerDialog.showDatePicker(it as EditText, false)
         }
-
-//
-//        val datePicker = createDatePickerDialog()
-//
-//        binding.selectStartDateButton.setOnClickListener {
-//            showDatePicker(datePicker)
-//            viewModel.isStartDateSelected = true
-//        }
-//
-//        binding.selectEndDateButton.setOnClickListener {
-//            showDatePicker(datePicker)
-//            viewModel.isStartDateSelected = false
-//        }
-//
-//        binding.filterButton.setOnClickListener {
-//            viewModel.fetchSalesBetweenDates()
-//        }
-//
-//
-//        viewModel.totalRevenue.observe(this) { revenue ->
-//            binding.totalRevenueTextView.text = "Total Revenue: $revenue"
-//        }
-//
-//        viewModel.totalSales.observe(this) { salesCount ->
-//            binding.totalSalesTextView.text = "Total Sales: $salesCount"
-//        }
-
+        binding.getRecord.setOnClickListener {
+            viewModel.validatedDatesAndGetData()
+        }
+        binding.clearBtn.setOnClickListener {
+            binding.startDateTxt.text=null
+            binding.startDateTxt.clearFocus()
+            binding.endDateTxt.text=null
+            binding.endDateTxt.clearFocus()
+            viewModel.clearAllData()
+        }
     }
 
     private fun setupViewModel() {
@@ -68,6 +61,7 @@ class ViewSalesActivity : AppCompatActivity(),DatePickerListener {
         binding.lifecycleOwner = this
 
     }
+
 
     override fun onDateSelected(
         year: Int,
@@ -81,6 +75,7 @@ class ViewSalesActivity : AppCompatActivity(),DatePickerListener {
         }
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         editText.setText(dateFormat.format(calendar.time))
+        viewModel.onDateChanged(year,month,dayOfMonth,isStartDate)
 
     }
 }

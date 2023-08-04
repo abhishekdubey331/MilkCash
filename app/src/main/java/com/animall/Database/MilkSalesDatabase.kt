@@ -4,9 +4,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.animall.Daos.MilkSaleDao
-import com.animall.models.MilkSale
+import com.animall.models.MilkSaleEntity
 
-@Database(entities = [MilkSale::class], version = 1, exportSchema = false)
+@Database(entities = [MilkSaleEntity::class], version = 1, exportSchema = false)
 abstract class MilkSaleDatabase : RoomDatabase() {
 
     abstract fun milkSaleDao(): MilkSaleDao

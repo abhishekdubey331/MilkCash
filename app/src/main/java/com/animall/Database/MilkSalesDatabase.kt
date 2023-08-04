@@ -4,7 +4,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.animall.Daos.MilkSaleDao
-import com.animall.models.MilkSaleEntity
+import com.animall.Entity.MilkSaleEntity
 
 @Database(entities = [MilkSaleEntity::class], version = 1, exportSchema = false)
 abstract class MilkSaleDatabase : RoomDatabase() {

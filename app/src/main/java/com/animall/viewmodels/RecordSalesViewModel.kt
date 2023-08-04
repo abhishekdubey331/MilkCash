@@ -1,7 +1,8 @@
 package com.animall.viewmodels
 
 import androidx.lifecycle.*
-import com.animall.models.MilkSaleEntity
+import com.animall.Entity.MilkSaleEntity
+import com.animall.Models.MilkSale
 import com.animall.repositories.MilkSaleRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -57,7 +58,7 @@ class RecordSalesViewModel(private val repository: MilkSaleRepository): ViewMode
 
         val totalAmount = saleQuantity * salePrice
 
-        val sale = MilkSaleEntity(
+        val sale = MilkSale(
             id = System.currentTimeMillis(), // Generates a unique ID
             quantity = saleQuantity,
             pricePerUnit = salePrice,

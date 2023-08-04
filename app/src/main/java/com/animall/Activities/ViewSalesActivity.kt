@@ -3,9 +3,13 @@ package com.animall.Activities
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.animall.Database.MilkSaleDatabase
+import com.animall.Models.MilkSale
+import com.animall.adaptors.MilkSaleAdapter
 import com.animall.databinding.ActivityViewSalesBinding
 import com.animall.repositories.MilkSaleRepository
 import com.animall.viewmodels.ViewSalesViewModel
@@ -16,6 +20,8 @@ import java.util.*
 class ViewSalesActivity : AppCompatActivity(),DatePickerListener {
     private lateinit var binding: ActivityViewSalesBinding
     private lateinit var viewModel: ViewSalesViewModel
+    private val milkSalesList: MutableList<MilkSale> = mutableListOf()
+    private lateinit var adapter:MilkSaleAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,11 +30,26 @@ class ViewSalesActivity : AppCompatActivity(),DatePickerListener {
         setupViewModel()
         setupListeners()
         setupObservers()
+        setupRecyclerView()
+    }
+
+    private fun setupRecyclerView() {
+        adapter = MilkSaleAdapter(milkSalesList)
+        binding.recyclerView.let {
+            it.adapter=adapter
+            it.layoutManager= LinearLayoutManager(this)
+        }
     }
 
     private fun setupObservers() {
         viewModel.message.observe(this){message->
             if(!message.isNullOrEmpty()) Toast.makeText(this,message,Toast.LENGTH_SHORT).show()
+        }
+        viewModel.milkSaleList.observe(this){
+                milkSales ->
+            milkSalesList.clear()
+            milkSalesList.addAll(milkSales)
+            adapter.notifyDataSetChanged()
         }
     }
 
